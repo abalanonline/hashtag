@@ -15,18 +15,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ab;
+package ab.hashtag;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MainTest {
+class YamlTest {
 
+  @Disabled
   @Test
-  void neg() {
-    assertEquals(1, new Main().neg(-1));
-    assertThrows(RuntimeException.class, () -> new Main().neg(Integer.MIN_VALUE));
+  void readSnakeyaml() {
+    Map<String, List<String>> expected = new Yaml().readSnakeyaml(getClass().getResourceAsStream(Yaml.YAML_FILE));
+    Map<String, List<String>> actual = new Yaml().read(getClass().getResourceAsStream(Yaml.YAML_FILE));
+    assertEquals(expected, actual);
   }
-
 }

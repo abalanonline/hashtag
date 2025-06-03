@@ -17,21 +17,54 @@
 
 package ab.hashtag;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Yaml {
 
   public static final String YAML_FILE = "hashtag.yaml";
 
+  public Map<String, List<String>> readSnakeyaml(InputStream stream) {
+    //return new org.yaml.snakeyaml.Yaml().load(stream);
+    throw new IllegalStateException();
+  }
+
+  /**
+   * This method can read the yaml indented with 2 spaces.
+   */
   public Map<String, List<String>> read(InputStream stream) {
-    return new org.yaml.snakeyaml.Yaml().load(stream);
+    Map<String, List<String>> map = new LinkedHashMap<>();
+    List<String> lines = new BufferedReader(new InputStreamReader(stream)).lines().collect(Collectors.toList());
+    String group = null;
+    for (String line : lines) {
+      if (line.trim().isEmpty()) continue;
+      int comment = line.indexOf(" #");
+      if (comment >= 0) line = line.substring(0, comment);
+      if (line.endsWith(":") && line.indexOf(' ') < 0) {
+        group = line.substring(0, line.length() - 1);
+        continue;
+      }
+      if (line.startsWith("  - ")) {
+        String line4 = line.substring(4);
+        if (group != null) {
+          map.computeIfAbsent(group, a -> new ArrayList<>()).add(line4.trim());
+          continue;
+        }
+      }
+      throw new IllegalStateException("error yaml: " + line);
+    }
+    return map;
   }
 
   public Map<String, List<String>> tags() {
