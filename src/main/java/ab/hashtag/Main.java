@@ -23,6 +23,7 @@ import java.util.Map;
 public class Main {
 
   public static void main(String[] args) {
+    System.out.println(String.join(", ", new Adb().copy()));
     Map<String, List<String>> tags = new Yaml().tags();
     tags.forEach((group, list) -> System.out.println(group + ": " + String.join(", ", list)));
   }
