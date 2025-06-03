@@ -17,15 +17,18 @@
 
 package ab.hashtag;
 
-import java.util.List;
-import java.util.Map;
-
 public class Main {
 
   public static void main(String[] args) {
-    System.out.println(String.join(", ", new Adb().copy()));
-    Map<String, List<String>> tags = new Yaml().tags();
-    tags.forEach((group, list) -> System.out.println(group + ": " + String.join(", ", list)));
+    if (args.length < 1) {
+      System.out.println("usage: hashtag <command>\n" +
+          "  copy - copy the tags from ig to yaml");
+      System.exit(1);
+    }
+    switch (args[0]) {
+      case "copy": new Service().copySave(); break;
+      default: throw new IllegalStateException("unknown command: " + args[0]);
+    }
   }
 
 }

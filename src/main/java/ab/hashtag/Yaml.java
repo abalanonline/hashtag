@@ -21,10 +21,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -72,6 +75,17 @@ public class Yaml {
       Path path = Paths.get(YAML_FILE);
       InputStream stream = Files.exists(path) ? Files.newInputStream(path) : getClass().getResourceAsStream(YAML_FILE);
       return read(stream);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  public void tags(List<String> tags) {
+    Path path = Paths.get(YAML_FILE);
+    String s = Files.exists(path) ? "" : "random:\n";
+    s += tags.stream().map(a -> "  - " + a + "\n").collect(Collectors.joining());
+    try (OutputStream stream = Files.newOutputStream(path, StandardOpenOption.APPEND)) {
+      stream.write(s.getBytes(StandardCharsets.UTF_8));
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }

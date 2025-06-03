@@ -17,21 +17,10 @@
 
 package ab.hashtag;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+import java.awt.Point;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Transfers text to/from mobile device via adb.
@@ -51,44 +40,6 @@ public class Adb {
     }
   }
 
-  protected String getEventType(int eventType) {
-    switch (eventType) {
-      case XMLStreamConstants.START_ELEMENT: return "START_ELEMENT";
-      case XMLStreamConstants.END_ELEMENT: return "END_ELEMENT";
-      case XMLStreamConstants.START_DOCUMENT: return "START_DOCUMENT";
-      case XMLStreamConstants.END_DOCUMENT: return "END_DOCUMENT";
-    }
-    throw new IllegalArgumentException("eventType " + eventType);
-  }
-
-  protected Map.Entry<String, Map<String, String>> getElement(XMLStreamReader reader) {
-    if (reader.getEventType() != XMLStreamConstants.START_ELEMENT) return null;
-    Map<String, String> map = new LinkedHashMap<>();
-    int count = reader.getAttributeCount();
-    for (int i = 0; i < count; i++) map.put(reader.getAttributeLocalName(i), reader.getAttributeValue(i));
-    return Collections.singletonMap(reader.getLocalName(), map).entrySet().iterator().next();
-  }
-
-  protected List<String> getIgTags(String xml) {
-    try {
-      XMLStreamReader reader = XMLInputFactory.newFactory().createXMLStreamReader(new StringReader(xml));
-      while (reader.hasNext()) {
-        Map.Entry<String, Map<String, String>> element = getElement(reader);
-        reader.next();
-        if (element != null && "node".equals(element.getKey())
-            && "com.instagram.ui.widget.textview.IgTextLayoutView".equals(element.getValue().get("class"))) {
-          Matcher matcher = Pattern.compile("\\W(#\\w+)").matcher(element.getValue().get("text"));
-          List<String> list = new ArrayList<>();
-          while (matcher.find()) list.add(matcher.group(1));
-          return list;
-        }
-      }
-      throw new IllegalStateException("IgTextLayoutView class not found");
-    } catch (XMLStreamException e) {
-      throw new IllegalStateException(e);
-    }
-  }
-
   public String getUiXml() {
     String fileName = exec("adb shell uiautomator dump");
     String keyword = "UI hierchary dumped to: ";
@@ -99,8 +50,8 @@ public class Adb {
     return xml;
   }
 
-  public List<String> copy() {
-    return getIgTags(getUiXml());
+  public void click(Point point) {
+    exec("adb shell input tap " + point.x + " " + point.y);
   }
 
 }
