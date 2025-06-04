@@ -54,4 +54,8 @@ public class Adb {
     exec("adb shell input tap " + point.x + " " + point.y);
   }
 
+  public void type(String s) {
+    exec("adb shell input text \"" + s.replace(" ", "%s") + "\"");
+  }
+
 }

@@ -25,16 +25,20 @@ public class Main {
   public static void main(String[] args) {
     if (args.length < 1) {
       System.out.println("usage: hashtag <command>\n" +
-          "  copy - copy the tags from ig to yaml\n" +
+          //"  copyyaml - copy the tags from ig to yaml\n" +
           "  new - create new tags\n" +
-          "  shuffle - shuffle tags");
+          "  shuffle - shuffle tags\n" +
+          "  copy - copy tags from phone\n" +
+          "  paste - paste tags to phone");
       System.exit(1);
     }
     switch (args[0]) {
-      case "copy": new Service().copySave(); break;
+      case "copyyaml": new Service().copySave(); break;
       case "new": new Service().newTags(IntStream.range(1, args.length).mapToObj(a -> args[a])
           .collect(Collectors.toList())); break;
       case "shuffle": new Service().shuffleTags(); break;
+      case "copy": new Service().copyPhone(); break;
+      case "paste": new Service().pastePhone(); break;
       default: throw new IllegalStateException("unknown command: " + args[0]);
     }
   }

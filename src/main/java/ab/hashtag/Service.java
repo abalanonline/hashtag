@@ -66,6 +66,10 @@ public class Service {
     return ig.getIgTags(xml);
   }
 
+  public void paste(List<String> tags) {
+    adb.type(tags.stream().map(a -> "#" + a).collect(Collectors.joining(" ")));
+  }
+
   protected List<String> loadTags() {
     try {
       return Files.readAllLines(TXT_FILE);
@@ -131,10 +135,26 @@ public class Service {
   }
 
   public void shuffleTags() {
-    List<String> list = loadTags();
+    List<String> list = new ArrayList<>(new LinkedHashSet<>(loadTags()));
     Collections.shuffle(list);
     saveTags(list);
     System.out.println("shuffle: " + list.size());
+    printTags(list);
+  }
+
+  public void copyPhone() {
+    Set<String> set = new LinkedHashSet<>(loadTags());
+    set.addAll(copy());
+    List<String> list = new ArrayList<>(set);
+    saveTags(list);
+    System.out.println("copy: " + list.size());
+    printTags(list);
+  }
+
+  public void pastePhone() {
+    List<String> list = loadTags();
+    paste(list);
+    System.out.println("paste: " + list.size());
     printTags(list);
   }
 
