@@ -91,7 +91,7 @@ public class Ig {
     validateSingleIgTextLayoutView(elements);
     for (Map.Entry<String, Map<String, String>> element : elements) {
       if (isIgTextLayoutView(element)) {
-        Matcher matcher = Pattern.compile("\\W#(\\w+)").matcher(element.getValue().get("text"));
+        Matcher matcher = Pattern.compile("\\W#([^#\\s]+)").matcher(element.getValue().get("text"));
         List<String> list = new ArrayList<>();
         while (matcher.find()) list.add(matcher.group(1));
         return list;

@@ -81,10 +81,11 @@ public class Yaml {
   }
 
   public void tags(List<String> tags) {
+    if (tags.isEmpty()) return;
     Path path = Paths.get(YAML_FILE);
     String s = Files.exists(path) ? "" : "random:\n";
     s += tags.stream().map(a -> "  - " + a + "\n").collect(Collectors.joining());
-    try (OutputStream stream = Files.newOutputStream(path, StandardOpenOption.APPEND)) {
+    try (OutputStream stream = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
       stream.write(s.getBytes(StandardCharsets.UTF_8));
     } catch (IOException e) {
       throw new UncheckedIOException(e);

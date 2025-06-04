@@ -17,16 +17,24 @@
 
 package ab.hashtag;
 
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 public class Main {
 
   public static void main(String[] args) {
     if (args.length < 1) {
       System.out.println("usage: hashtag <command>\n" +
-          "  copy - copy the tags from ig to yaml");
+          "  copy - copy the tags from ig to yaml\n" +
+          "  new - create new tags\n" +
+          "  shuffle - shuffle tags");
       System.exit(1);
     }
     switch (args[0]) {
       case "copy": new Service().copySave(); break;
+      case "new": new Service().newTags(IntStream.range(1, args.length).mapToObj(a -> args[a])
+          .collect(Collectors.toList())); break;
+      case "shuffle": new Service().shuffleTags(); break;
       default: throw new IllegalStateException("unknown command: " + args[0]);
     }
   }
