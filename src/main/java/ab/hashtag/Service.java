@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -104,9 +105,20 @@ public class Service {
     System.out.println(s.toString());
   }
 
+  /**
+   * Appends the current tags and tags from ig post to hashtag.yaml
+   */
   public void copySave() {
+    appendYaml(loadTags());
+    appendYaml(copy());
+  }
+
+  /**
+   * Appends the collection to the end of hashtag.yaml
+   */
+  public void appendYaml(Collection<String> collection) {
     Yaml yaml = new Yaml();
-    Set<String> tags = new LinkedHashSet<>(copy());
+    Set<String> tags = new LinkedHashSet<>(collection);
     yaml.tags().forEach((group, list) -> {
       tags.remove(group);
       tags.removeAll(list);
